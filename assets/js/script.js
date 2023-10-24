@@ -48,6 +48,7 @@ $(function () {
       }
     }
 
+    // This loop goes through 12PM - 5PM and checks the time to see if it has passed, is that time, or the time will be in the future
     for (var i = 1; i < 6; i++) {
       var timeBox = document.getElementById("hour-" + i);
 
@@ -75,6 +76,7 @@ $(function () {
   // time-block containing the button that was clicked? How might the id be
   // useful when saving the description in local storage?
 
+  // This click listener adds the text boxes text content into the local storage to save it
   $("button").click(function () {
     var hourBox = $(this).parent().attr("id");
     var textBox = $(this).parent().children("textarea").val();
@@ -82,6 +84,7 @@ $(function () {
     localStorage.setItem(hourBox, textBox);
   });
 
+  // This was an extra feature to clear the tasks using a similar for loop as i did for checking the colors
   $("#reset").click(function () {
     localStorage.clear();
 
