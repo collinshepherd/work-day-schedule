@@ -3,58 +3,68 @@
 // in the html.
 
 $(function () {
+  // Setting the day on the page once the elements are rendered
   $("#currentDay").text(dayjs().format("dddd, MMMM D "));
 
+  // This initially was set to change the time as it was displaying seconds but now it just checks to see if the day has changed
   setInterval(function () {
     $("#currentDay").text(dayjs().format("dddd, MMMM D"));
   }, 1000);
 
+  // Setting up the variables that are used in the logic (The A at the end gives AM / PM so I can check wether it is morning or night)
   var currentTime = dayjs().format("h:mm A");
   var currentHour = dayjs().format("hh");
   var isMorning;
 
+  // This checks to see if it is AM or PM and changes the isMorning variable
   if (currentTime.slice(currentTime.length - 2) == "AM") {
     isMorning = true;
   } else {
     isMorning = false;
   }
 
-  for (var i = 9; i < 13; i++) {
-    var testing = document.getElementById("hour-" + i);
+  setTimeBoxes();
+  setInterval(setTimeBoxes, 1000);
 
-    $(testing)
-      .children("textarea")
-      .text(localStorage.getItem("hour-" + i));
+  function setTimeBoxes() {
+    // This loop goes through 9AM - 12PM and checks the time to see if it has passed, is that time, or the time will be in the future
+    for (var i = 9; i < 13; i++) {
+      var timeBox = document.getElementById("hour-" + i);
 
-    if (!isMorning && currentHour != 12) {
-      testing.setAttribute("class", "row time-block past");
-    } else {
-      if (i < currentHour) {
-        testing.setAttribute("class", "row time-block past");
-      } else if (i > currentHour) {
-        testing.setAttribute("class", "row time-block future");
+      $(timeBox)
+        .children("textarea")
+        .text(localStorage.getItem("hour-" + i));
+
+      if (!isMorning && currentHour != 12) {
+        timeBox.setAttribute("class", "row time-block past");
       } else {
-        testing.setAttribute("class", "row time-block present");
+        if (i < currentHour) {
+          timeBox.setAttribute("class", "row time-block past");
+        } else if (i > currentHour) {
+          timeBox.setAttribute("class", "row time-block future");
+        } else {
+          timeBox.setAttribute("class", "row time-block present");
+        }
       }
     }
-  }
 
-  for (var i = 1; i < 6; i++) {
-    var testing = document.getElementById("hour-" + i);
+    for (var i = 1; i < 6; i++) {
+      var timeBox = document.getElementById("hour-" + i);
 
-    $(testing)
-      .children("textarea")
-      .text(localStorage.getItem("hour-" + i));
+      $(timeBox)
+        .children("textarea")
+        .text(localStorage.getItem("hour-" + i));
 
-    if (!isMorning && currentHour == 12) {
-      testing.setAttribute("class", "row time-block future");
-    } else {
-      if (i < currentHour) {
-        testing.setAttribute("class", "row time-block past");
-      } else if (i > currentHour) {
-        testing.setAttribute("class", "row time-block future");
+      if ((!isMorning && currentHour == 12) || isMorning) {
+        timeBox.setAttribute("class", "row time-block future");
       } else {
-        testing.setAttribute("class", "row time-block present");
+        if (i < currentHour) {
+          timeBox.setAttribute("class", "row time-block past");
+        } else if (i > currentHour) {
+          timeBox.setAttribute("class", "row time-block future");
+        } else {
+          timeBox.setAttribute("class", "row time-block present");
+        }
       }
     }
   }
@@ -66,13 +76,25 @@ $(function () {
   // useful when saving the description in local storage?
 
   $("button").click(function () {
-    console.log($(this).parent().attr("id"));
-    console.log($(this).parent().children("textarea").val());
-
     var hourBox = $(this).parent().attr("id");
     var textBox = $(this).parent().children("textarea").val();
 
     localStorage.setItem(hourBox, textBox);
+  });
+
+  $("#reset").click(function () {
+    localStorage.clear();
+
+    for (var i = 1; i < 6; i++) {
+      var timeBox = document.getElementById("hour-" + i);
+      console.log(timeBox);
+      $(timeBox).children("textarea").val("");
+    }
+    for (var i = 9; i < 13; i++) {
+      var timeBox = document.getElementById("hour-" + i);
+      console.log(timeBox);
+      $(timeBox).children("textarea").val("");
+    }
   });
 
   //
